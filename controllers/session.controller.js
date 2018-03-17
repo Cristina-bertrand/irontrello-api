@@ -1,5 +1,37 @@
 const passport = require('passport');
 const ApiError = require('../models/api-error.model');
+const mongoose = require('mongoose');
+const User = require('../models/user.model');
+
+module.exports.signup = (req, res, next) => {
+  const email = req.body.email;
+  const password = req.body.password;
+
+  User.findOne({email: this.email})
+  .then(user => {
+    if (user != null) {
+      next(new ApiError('User already registered', 400));
+    } else {
+      user = new User({
+        email: req.body.email,
+        password: req.body.password
+      });
+      user
+        .save()
+        .then(() => {
+          res.status(200).json({ message: 'Success' });
+        })
+        .catch(error => {
+          if (error instanceof mongoose.Error.ValidationError) {
+            next(new ApiError(error.errors, 400));
+          } else {
+            next(error);
+          }
+        });
+    }
+  })
+  .catch(error => next(error));
+}
 
 module.exports.create = (req, res, next) => {
   const email = req.body.email;

@@ -3,7 +3,9 @@ const router = express.Router();
 const secureMiddleware = require('../middleware/secure.middleware');
 const sessionController = require('../controllers/session.controller');
 
+router.post('/signup', sessionController.signup);
+router.post('/create', sessionController.create);
 router.delete('/', secureMiddleware.isAuthenticated, sessionController.destroy);
-router.post('/', sessionController.create);
+
 
 module.exports = router;
